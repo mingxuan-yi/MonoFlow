@@ -22,7 +22,7 @@ def get_args():
     parser.add_argument('--dataset', type=str, choices=['mnist', 'cifar10'], default='mnist')
     parser.add_argument('--dataroot', type=str, default='../data')
     parser.add_argument('--batch_size', type=int, default=128)
-    parser.add_argument('--method', type=str, choices=['ns', 'vanilla', 'logit'], default='vanilla')
+    parser.add_argument('--method', type=str, choices=['ns', 'vanilla', 'logit', 'arcsinh'], default='vanilla')
     parser.add_argument('--C', type=float, default=5.0)
     parser.add_argument('--saveroot', type=str, default='./saved')
     
@@ -69,6 +69,8 @@ def train(x_real, netG, netD, D_optimizer, G_optimizer, device, method='kl', nit
         G_loss = torch.mean(torch.log(1.0 - torch.sigmoid(d+args.C))) #original gan
     elif method == 'logit':
         G_loss = -torch.mean(d)
+    elif method == 'arcsinh':
+        G_loss = -torch.mean(torch.arcsinh(d))
     # gradient backprop & optimize ONLY G's parameters
     G_loss.backward()
     G_optimizer.step()
